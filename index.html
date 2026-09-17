@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Скинулись</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase.js" defer></script>
+</head>
+<body>
+  <header>
+    <h1>Скинулись</h1>
+    <p>Разом зібратися легше.</p>
+    <div class="wallet-box">
+  <button id="connectWallet" type="button">Підключити гаманець</button>
+  <p id="walletStatus" aria-live="polite">Гаманець не підключено</p>
+</div>
+  </header>
+
+  <main>
+<section>
+  <h2>Наші збори</h2>
+  <div id="collectionGrid"></div>
+  <p id="collectionCount"></p>
+</section>
+
+<section>
+  <h2>Створити збір</h2>
+
+  <form id="createForm">
+    <label for="title">Назва збору</label>
+    <input id="title" name="title" type="text" required>
+
+    <label for="description">Опис</label>
+    <textarea id="description" name="description" required></textarea>
+
+    <label for="goal">Ціль збору (SOL)</label>
+    <input id="goal" name="goal" type="number" min="0.01" step="0.01" required>
+
+    <button type="submit">Додати збір</button>
+  </form>
+</section>
+  </main>
+</body>
+</html>
