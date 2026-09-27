@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080811">
+<title>SKYNULYS — Trustless Group Payments</title>
+<style>
+:root{
+  --bg:#080811;--panel:#10101c;--panel-2:#151526;--panel-3:#1b1b30;
+  --line:rgba(255,255,255,.09);--text:#f7f7ff;--muted:#9292aa;
+  --purple:#8b5cf6;--purple-2:#6d28d9;--cyan:#22d3ee;
+  --green:#22c55e;--red:#ef4444;--yellow:#facc15;
+  --shadow:0 24px 80px rgba(0,0,0,.35);--radius:22px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif;background:
+radial-gradient(circle at 15% 0%,rgba(109,40,217,.17),transparent 32rem),
+radial-gradient(circle at 100% 20%,rgba(34,211,238,.08),transparent 28rem),
+var(--bg);color:var(--text);min-height:100vh}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+button:disabled{cursor:not-allowed;opacity:.45}
+a{color:inherit;text-decoration:none}
+.app{min-height:100vh}
+.sidebar{position:fixed;inset:0 auto 0 0;width:258px;padding:25px 18px;
+background:rgba(8,8,17,.9);border-right:1px solid var(--line);backdrop-filter:blur(22px);z-index:30;
+display:flex;flex-direction:column}
+.brand{display:flex;align-items:center;gap:12px;padding:0 10px 28px}
+.brand-mark{width:44px;height:44px;border-radius:15px;display:grid;place-items:center;
+font-size:24px;font-weight:900;background:linear-gradient(135deg,var(--purple),var(--cyan));
+box-shadow:0 0 35px rgba(139,92,246,.3)}
+.brand strong{display:block;letter-spacing:1.8px;font-size:16px}
+.brand small{display:block;color:var(--muted);font-size:9px;letter-spacing:1.1px;margin-top:4px}
+.nav{display:grid;gap:7px}
+.nav button{border:1px solid transparent;background:transparent;color:var(--muted);
+padding:13px 14px;border-radius:14px;text-align:left;display:flex;gap:12px;align-items:center;
+transition:.2s}
+.nav button:hover,.nav button.active{background:linear-gradient(90deg,rgba(139,92,246,.2),rgba(139,92,246,.04));
+border-color:rgba(139,92,246,.25);color:var(--text)}
+.nav-icon{width:22px;text-align:center;color:var(--purple)}
+.sidebar-bottom{margin-top:auto;border:1px solid var(--line);border-radius:17px;padding:15px;background:rgba(255,255,255,.025)}
+.network-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 14px var(--green);margin-right:7px}
+.muted{color:var(--muted)}
+.main{margin-left:258px;min-width:0}
+.topbar{height:78px;padding:0 34px;border-bottom:1px solid var(--line);display:flex;align-items:center;
+justify-content:space-between;gap:18px;position:sticky;top:0;background:rgba(8,8,17,.76);backdrop-filter:blur(20px);z-index:20}
+.topbar-meta{font-size:12px;color:var(--muted);display:flex;gap:9px;align-items:center}
+.wallet-btn,.primary,.secondary,.danger{border:1px solid var(--line);border-radius:13px;padding:11px 16px;
+font-weight:750;transition:.2s}
+.wallet-btn,.primary{background:linear-gradient(135deg,var(--purple),var(--purple-2));color:white;border-color:transparent;
+box-shadow:0 10px 28px rgba(109,40,217,.22)}
+.secondary{background:rgba(255,255,255,.035);color:var(--text)}
+.danger{background:rgba(239,68,68,.1);color:#fecaca;border-color:rgba(239,68,68,.25)}
+.wallet-btn:hover,.primary:hover,.secondary:hover{transform:translateY(-2px)}
+.mobile-menu{display:none;background:transparent;border:0;color:var(--text);font-size:24px}
+.page{display:none;padding:36px;max-width:1500px;margin:auto;animation:fade .3s ease}
+.page.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.page-head{display:flex;justify-content:space-between;align-items:end;gap:18px;margin-bottom:25px}
+.page-title{font-size:clamp(28px,4vw,46px);letter-spacing:-1.5px}
+.page-subtitle{color:var(--muted);margin-top:8px;max-width:680px;line-height:1.65}
+.hero{position:relative;overflow:hidden;border:1px solid rgba(139,92,246,.23);border-radius:28px;
+padding:42px;background:linear-gradient(135deg,rgba(139,92,246,.2),rgba(21,21,38,.78) 55%,rgba(34,211,238,.08));
+box-shadow:var(--shadow)}
+.hero:after{content:"";position:absolute;width:300px;height:300px;border-radius:50%;right:-110px;top:-140px;
+background:radial-gradient(circle,rgba(139,92,246,.45),transparent 70%);pointer-events:none}
+.hero h1{font-size:clamp(36px,5vw,70px);max-width:780px;line-height:1.03;letter-spacing:-3px}
+.gradient{background:linear-gradient(90deg,#c4b5fd,var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:#c0bfd2;max-width:690px;line-height:1.8;margin:22px 0}
+.actions{display:flex;gap:12px;flex-wrap:wrap}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:22px 0}
+.stat,.card,.form-card,.profile-card,.timeline-item{background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.018));
+border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:0 12px 40px rgba(0,0,0,.12)}
+.stat-label{color:var(--muted);font-size:13px}.stat-value{font-size:29px;font-weight:850;margin-top:10px}
+.section-row{display:flex;justify-content:space-between;align-items:center;gap:15px;margin:28px 0 16px}
+.section-row h2{font-size:22px}
+.campaign-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:17px}
+.card{position:relative;overflow:hidden}
+.card-top{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.badge{display:inline-flex;padding:6px 10px;border-radius:99px;font-size:10px;font-weight:850;letter-spacing:.6px}
+.badge.active{background:rgba(34,197,94,.12);color:#86efac}
+.badge.success{background:rgba(34,211,238,.12);color:#67e8f9}
+.badge.failed{background:rgba(239,68,68,.12);color:#fca5a5}
+.card h3{font-size:20px;margin:18px 0 9px}
+.card p{color:var(--muted);line-height:1.65;font-size:13px;min-height:62px}
+.progress{height:8px;background:#29293d;border-radius:99px;overflow:hidden;margin:18px 0 10px}
+.progress>span{display:block;height:100%;background:linear-gradient(90deg,var(--purple),var(--cyan));border-radius:99px}
+.card-meta{display:flex;justify-content:space-between;color:var(--muted);font-size:12px}
+.card-footer{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:19px}
+.card-footer strong{font-size:18px}
+.small-btn{padding:9px 12px;border-radius:11px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);font-weight:700}
+.toolbar{display:flex;gap:12px;flex-wrap:wrap;margin:20px 0}
+.field{display:grid;gap:8px;margin-bottom:16px}
+.field label{font-size:12px;color:#b7b7ca;font-weight:750}
+.field input,.field textarea,.field select{width:100%;background:#0b0b15;color:var(--text);border:1px solid var(--line);
+border-radius:13px;padding:13px;outline:none}
+.field input[type="date"]{color-scheme:dark;accent-color:var(--purple)}
+.field input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(1);opacity:.8;cursor:pointer}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(139,92,246,.12)}
+.form-card{max-width:850px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.profile-grid{display:grid;grid-template-columns:1fr 1.5fr;gap:18px}
+.profile-avatar{width:85px;height:85px;border-radius:26px;display:grid;place-items:center;font-size:35px;font-weight:900;
+background:linear-gradient(135deg,var(--purple),var(--cyan));margin-bottom:18px}
+.info-row{display:flex;justify-content:space-between;gap:20px;padding:15px 0;border-bottom:1px solid var(--line);font-size:14px}
+.info-row:last-child{border-bottom:0}
+.table{width:100%;border-collapse:collapse;font-size:13px}
+.table th,.table td{text-align:left;padding:14px 10px;border-bottom:1px solid var(--line)}
+.table th{color:var(--muted);font-weight:650}
+.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+.day{min-height:90px;border:1px solid var(--line);border-radius:13px;padding:10px;background:rgba(255,255,255,.025)}
+.day strong{font-size:12px}.day small{display:block;color:var(--purple);margin-top:12px;line-height:1.4}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;place-items:center;padding:18px;z-index:100}
+.modal.show{display:grid}
+.modal-box{width:min(680px,100%);max-height:90vh;overflow:auto;background:#11111e;border:1px solid var(--line);
+border-radius:25px;padding:27px;box-shadow:var(--shadow)}
+.modal-head{display:flex;justify-content:space-between;gap:15px;align-items:start}
+.close{border:0;background:rgba(255,255,255,.06);color:var(--text);width:34px;height:34px;border-radius:10px;font-size:22px}
+.toast{position:fixed;right:22px;bottom:22px;z-index:200;background:#171727;border:1px solid var(--line);
+border-radius:14px;padding:15px 18px;transform:translateY(150%);transition:.3s;box-shadow:var(--shadow)}
+.toast.show{transform:none}
+.empty{padding:35px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:18px}
+@media(max-width:1100px){.campaign-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:760px){.sidebar{transform:translateX(-100%);transition:.25s}.sidebar.open{transform:none}.main{margin-left:0}.mobile-menu{display:block}
+.topbar{padding:0 17px}.page{padding:22px 15px}.hero{padding:27px}.hero h1{letter-spacing:-1.5px}.campaign-grid,.profile-grid,.two-col{grid-template-columns:1fr}.stats{gap:10px}.stat{padding:16px}.stat-value{font-size:24px}}
+@media(max-width:430px){.stats{grid-template-columns:1fr}.topbar-meta{display:none}.hero h1{font-size:36px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar" id="sidebar">
+  <div class="brand"><div class="brand-mark">S</div><div><strong>SKYNULYS</strong><small>TRUSTLESS GROUP PAYMENTS</small></div></div>
+  <nav class="nav">
+    <button class="active" data-page="dashboard">⌂ <span>Головна</span></button>
+    <button data-page="campaigns">◈ <span>Кампании</span></button>
+    <button data-page="create">＋ <span>Створити кампанію</span></button>
+    <button data-page="wallet">◎ <span>Особистий кабінет</span></button>
+    <button data-page="organizer">♙ <span>Кабінет організатора</span></button>
+    <button data-page="calendar">▦ <span>Календар</span></button>
+    <button data-page="history">↔ <span>Історія транзакцій</span></button>
+    <button data-page="settings">⚙ <span>Налаштування</span></button>
+  </nav>
+  <div class="sidebar-bottom"><span class="network-dot"></span><strong>Solana Devnet</strong><p class="muted" style="font-size:11px;margin-top:7px">Тестове середовище. On-chain інтеграція готується.</p></div>
+</aside>
+
+<main class="main">
+<header class="topbar">
+  <button class="mobile-menu" id="mobileMenu">☰</button>
+  <div class="topbar-meta"><span class="network-dot"></span> Solana / Devnet / USDC</div>
+  <button class="wallet-btn" id="walletButton">Підключити Phantom</button>
+</header>
+
+<section class="page active" id="page-dashboard">
+  <div class="hero">
+    <h1>Групові платежі без <span class="gradient">сліпої довіри.</span></h1>
+    <p>SKYNULYS допомагає командам збирати кошти на спільні цілі, показувати прозорий прогрес і готувати платежі до виконання через Solana escrow.</p>
+    <div class="actions"><button class="primary" data-page="create">＋ Створити кампанію</button><button class="secondary" data-page="campaigns">Переглянути кампанії</button></div>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="stat-label">Активні кампанії</div><div class="stat-value" id="statActive">0</div></div>
+    <div class="stat"><div class="stat-label">Зібрано в демо</div><div class="stat-value" id="statRaised">0.00</div><div class="muted" style="font-size:11px">USDC · local demo</div></div>
+    <div class="stat"><div class="stat-label">Учасники</div><div class="stat-value" id="statContributors">0</div></div>
+    <div class="stat"><div class="stat-label">Мережа</div><div class="stat-value" style="font-size:22px;color:#86efac">Devnet</div></div>
+  </div>
+  <div class="section-row"><h2>Рекомендовані кампанії</h2><button class="small-btn" data-page="campaigns">Усі кампанії →</button></div>
+  <div class="campaign-grid" id="featuredCampaigns"></div>
+</section>
+
+<section class="page" id="page-campaigns">
+  <div class="page-head"><div><h1 class="page-title">Кампанії</h1><p class="page-subtitle">Переглядай спільні цілі та відкривай деталі зборів.</p></div><button class="primary" data-page="create">＋ Створити</button></div>
+  <div class="toolbar"><input id="search" placeholder="Пошук кампанії..." style="flex:1;min-width:180px;background:#0b0b15;color:white;border:1px solid var(--line);border-radius:13px;padding:13px"><select id="filter" style="background:#0b0b15;color:white;border:1px solid var(--line);border-radius:13px;padding:13px"><option value="all">Усі статуси</option><option value="active">Активні</option><option value="success">Завершені</option></select></div>
+  <div class="campaign-grid" id="allCampaigns"></div>
+</section>
+
+<section class="page" id="page-create">
+  <div class="page-head"><div><h1 class="page-title">Створити кампанію</h1><p class="page-subtitle">Зараз створення працює в demo-режимі. On-chain створення буде підключено через Solana-програму.</p></div></div>
+  <form class="form-card" id="createForm">
+    <div class="field"><label>Назва кампанії</label><input id="campaignName" required placeholder="Наприклад: Поїздка групи до музею"></div>
+    <div class="field"><label>Опис</label><textarea id="campaignDescription" rows="4" required placeholder="На що збираєте кошти?"></textarea></div>
+    <div class="two-col"><div class="field"><label>Ціль, USDC</label><input id="campaignGoal" type="number" min="0.01" step="0.01" required></div><div class="field"><label for="campaignDeadline">Дедлайн</label><input id="campaignDeadline" type="date" required aria-describedby="deadlineHint"><small id="deadlineHint" class="muted">Оберіть сьогодні або майбутню дату.</small></div></div>
+    <div class="field"><label>Wallet отримувача</label><input id="campaignRecipient" placeholder="Solana wallet address" required></div>
+    <button class="primary">Створити demo-кампанію</button>
+  </form>
+</section>
+
+<section class="page" id="page-wallet">
+  <div class="page-head"><div><h1 class="page-title">Особистий кабінет</h1><p class="page-subtitle">Профіль, гаманець і внески користувача.</p></div><button class="secondary" id="editProfile">Редагувати профіль</button></div>
+  <div class="profile-grid">
+    <div class="profile-card"><div class="profile-avatar" id="avatar">T</div><h2 id="profileName">Taras</h2><p class="muted" id="profileWallet">Wallet не підключено</p><div style="margin-top:20px"><button class="secondary" id="copyWallet">Копіювати адресу</button></div></div>
+    <div class="profile-card"><h3>Огляд акаунта</h3><div class="info-row"><span class="muted">Баланс</span><strong id="balance">—</strong></div><div class="info-row"><span class="muted">Внесено в demo</span><strong id="contributed">0.00 USDC</strong></div><div class="info-row"><span class="muted">Створено кампаній</span><strong id="createdCount">0</strong></div><div class="info-row"><span class="muted">Мережа</span><strong style="color:#86efac">Solana Devnet</strong></div></div>
+  </div>
+</section>
+
+<section class="page" id="page-organizer">
+  <div class="page-head"><div><h1 class="page-title">Кабінет організатора</h1><p class="page-subtitle">Керування власними зборами та майбутніми on-chain діями.</p></div><button class="primary" data-page="create">＋ Нова кампанія</button></div>
+  <div class="profile-card"><table class="table"><thead><tr><th>Кампанія</th><th>Прогрес</th><th>Статус</th><th>Дії</th></tr></thead><tbody id="organizerRows"></tbody></table></div>
+</section>
+
+<section class="page" id="page-calendar">
+  <div class="page-head"><div><h1 class="page-title">Календар</h1><p class="page-subtitle">Дедлайни кампаній і планування групових платежів.</p></div></div>
+  <div class="profile-card"><div class="calendar" id="calendar"></div></div>
+</section>
+
+<section class="page" id="page-history">
+  <div class="page-head"><div><h1 class="page-title">Історія транзакцій</h1><p class="page-subtitle">Demo-журнал дій. Справжні signature та Solana Explorer з’являться після підключення on-chain шару.</p></div></div>
+  <div class="profile-card"><table class="table"><thead><tr><th>Дата</th><th>Тип</th><th>Сума</th><th>Статус</th><th>Explorer</th></tr></thead><tbody id="historyRows"></tbody></table></div>
+</section>
+
+<section class="page" id="page-settings">
+  <div class="page-head"><div><h1 class="page-title">Налаштування</h1><p class="page-subtitle">Параметри середовища та локального демо.</p></div></div>
+  <div class="form-card">
+    <div class="info-row"><span><strong>Мережа</strong><br><span class="muted">Solana Devnet</span></span><strong style="color:#86efac">Увімкнено</strong></div>
+    <div class="info-row"><span><strong>Токен</strong><br><span class="muted">USDC test environment</span></span><strong>USDC</strong></div>
+    <div class="info-row"><span><strong>Зберігання</strong><br><span class="muted">Browser localStorage</span></span><strong>Demo</strong></div>
+    <div style="margin-top:20px"><button class="danger" id="resetDemo">Скинути demo-дані</button></div>
+  </div>
+</section>
+</main></div>
+
+<div class="modal" id="detailModal"><div class="modal-box"><div class="modal-head"><div><span class="badge active" id="detailStatus">ACTIVE</span><h2 id="detailTitle" style="margin-top:12px"></h2></div><button class="close" data-close="detailModal">×</button></div><p class="muted" id="detailDescription" style="line-height:1.7;margin-top:12px"></p><div class="progress"><span id="detailProgress"></span></div><div class="card-meta"><span id="detailRaised"></span><span id="detailGoal"></span></div><div class="info-row"><span class="muted">Дедлайн</span><strong id="detailDeadline"></strong></div><div class="info-row"><span class="muted">Отримувач</span><strong id="detailRecipient" style="word-break:break-all"></strong></div><div class="actions" style="margin-top:20px"><button class="primary" id="contributeButton">Зробити demo-внесок</button><button class="secondary" id="shareButton">Поділитися</button><button class="secondary" id="copyRecipient">Копіювати wallet</button></div></div></div>
+<div class="modal" id="profileModal"><div class="modal-box"><div class="modal-head"><h2>Редагувати профіль</h2><button class="close" data-close="profileModal">×</button></div><form id="profileForm" style="margin-top:20px"><div class="field"><label>Ім’я</label><input id="profileNameInput" required></div><div class="actions"><button class="primary">Зберегти</button><button type="button" class="secondary" data-close="profileModal">Скасувати</button></div></form></div></div>
+<div class="toast" id="toast" aria-live="polite"></div>
+
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const STORAGE = {campaigns:"skynulys_campaigns_clean",profile:"skynulys_profile_clean",history:"skynulys_history_clean"};
+const seed = [
+{id:1,name:"Поїздка групи до музею",description:"Спільний збір на транспорт, квитки та організаційні витрати.",goal:180,raised:96,contributors:8,deadline:"2026-10-05",recipient:"DemoRecipientMuseum111111111111111111111111",createdBy:"seed",status:"ACTIVE"},
+{id:2,name:"Hackathon Booth",description:"Оренда місця, друк матеріалів і командні витрати на хакатон.",goal:300,raised:225,contributors:12,deadline:"2026-10-12",recipient:"DemoRecipientHackathon22222222222222222222",createdBy:"seed",status:"ACTIVE"},
+{id:3,name:"FPV Workshop",description:"Спільний бюджет на навчальний FPV-воркшоп.",goal:120,raised:120,contributors:7,deadline:"2026-09-28",recipient:"DemoRecipientFPV333333333333333333333333",createdBy:"seed",status:"SUCCESS"}
+];
+let campaigns = load(STORAGE.campaigns,seed);
+let profile = load(STORAGE.profile,{name:"Taras",wallet:"",contributed:0});
+let history = load(STORAGE.history,[]);
+let selectedId = null;
+
+function load(key,fallback){try{return JSON.parse(localStorage.getItem(key)) ?? fallback}catch{return fallback}}
+function save(){localStorage.setItem(STORAGE.campaigns,JSON.stringify(campaigns));localStorage.setItem(STORAGE.profile,JSON.stringify(profile));localStorage.setItem(STORAGE.history,JSON.stringify(history))}
+function toast(message){$("toast").textContent=message;$("toast").classList.add("show");clearTimeout(toast.timer);toast.timer=setTimeout(()=>$("toast").classList.remove("show"),3200)}
+function esc(value){return String(value).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+function money(n){return Number(n||0).toFixed(2)}
+function pct(c){return Math.min(100,Math.round(c.raised/c.goal*100))}
+function shortWallet(w){return w?w.slice(0,5)+"…"+w.slice(-5):"Підключити Phantom"}
+function localISODate(date=new Date()){
+  const year=date.getFullYear(),month=String(date.getMonth()+1).padStart(2,"0"),day=String(date.getDate()).padStart(2,"0");
+  return `${year}-${month}-${day}`;
+}
+function setupDeadlineInput(){
+  const input=$("campaignDeadline"),today=localISODate();
+  input.min=today;
+  if(!input.value)input.value=localISODate(new Date(Date.now()+86400000));
+}
+
+function showPage(page,button){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  const target=$("page-"+page);if(!target)return;
+  target.classList.add("active");
+  document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
+  $("sidebar").classList.remove("open");
+  if(page==="organizer")renderOrganizer();
+  if(page==="calendar")renderCalendar();
+  if(page==="history")renderHistory();
+}
+document.addEventListener("click",e=>{
+  const page=e.target.closest("[data-page]")?.dataset.page;
+  if(page)showPage(page);
+  const close=e.target.closest("[data-close]")?.dataset.close;
+  if(close)$(close).classList.remove("show");
+});
+$("mobileMenu").onclick=()=>$("sidebar").classList.toggle("open");
+
+function card(c){
+ const status=c.status==="SUCCESS"?"success":c.status==="FAILED"?"failed":"active";
+ return `<article class="card"><div class="card-top"><span class="badge ${status}">${esc(c.status)}</span><span class="muted" style="font-size:11px">#${c.id}</span></div><h3>${esc(c.name)}</h3><p>${esc(c.description)}</p><div class="progress"><span style="width:${pct(c)}%"></span></div><div class="card-meta"><span>${money(c.raised)} / ${money(c.goal)} USDC</span><span>${pct(c)}%</span></div><div class="card-footer"><strong>${c.contributors} учасн.</strong><button class="small-btn" onclick="openCampaign(${c.id})">Деталі →</button></div></article>`;
+}
+function renderCampaigns(){
+ const query=$("search")?.value.toLowerCase()||"",filter=$("filter")?.value||"all";
+ const list=campaigns.filter(c=>(c.name+" "+c.description).toLowerCase().includes(query)&&(filter==="all"||filter==="active"&&c.status==="ACTIVE"||filter==="success"&&c.status==="SUCCESS"));
+ $("allCampaigns").innerHTML=list.length?list.map(card).join(""):'<div class="empty">Кампаній не знайдено.</div>';
+ $("featuredCampaigns").innerHTML=campaigns.slice(0,3).map(card).join("");
+ $("statActive").textContent=campaigns.filter(c=>c.status==="ACTIVE").length;
+ $("statRaised").textContent=money(campaigns.reduce((s,c)=>s+Number(c.raised||0),0));
+ $("statContributors").textContent=campaigns.reduce((s,c)=>s+Number(c.contributors||0),0);
+ renderProfile();
+}
+$("search").oninput=renderCampaigns;$("filter").onchange=renderCampaigns;
+
+function openCampaign(id){
+ selectedId=id;const c=campaigns.find(x=>x.id===id);if(!c)return;
+ $("detailStatus").textContent=c.status;$("detailStatus").className="badge "+(c.status==="SUCCESS"?"success":c.status==="FAILED"?"failed":"active");
+ $("detailTitle").textContent=c.name;$("detailDescription").textContent=c.description;$("detailProgress").style.width=pct(c)+"%";
+ $("detailRaised").textContent=money(c.raised)+" USDC";$("detailGoal").textContent="Ціль: "+money(c.goal)+" USDC";
+ $("detailDeadline").textContent=c.deadline||"—";$("detailRecipient").textContent=c.recipient||"—";
+ $("contributeButton").disabled=c.status!=="ACTIVE";
+ $("detailModal").classList.add("show");
+}
+$("contributeButton").onclick=()=>{
+ const c=campaigns.find(x=>x.id===selectedId);if(!c||c.status!=="ACTIVE")return;
+ const amount=Number(prompt("Сума demo-внеску в USDC:", "5"));
+ if(!Number.isFinite(amount)||amount<=0)return;
+ c.raised=Math.min(c.goal,c.raised+amount);c.contributors++;
+ profile.contributed=Number(profile.contributed||0)+amount;
+ history.unshift({date:new Date().toLocaleString("uk-UA"),type:"DEMO CONTRIBUTION",amount:money(amount),status:"LOCAL DEMO",signature:""});
+ if(c.raised>=c.goal)c.status="SUCCESS";
+ save();renderCampaigns();openCampaign(c.id);toast("Demo-внесок збережено локально.");
+};
+$("shareButton").onclick=async()=>{
+ const c=campaigns.find(x=>x.id===selectedId);if(!c)return;
+ const url=location.href.split("#")[0]+"#campaign-"+c.id;
+ const text="Приєднуйся до кампанії SKYNULYS: "+c.name+" — "+url;
+ try{if(navigator.share)await navigator.share({title:c.name,text,url});else{await navigator.clipboard.writeText(text);toast("Посилання скопійовано.");}}catch{toast("Поширення скасовано.");}
+};
+$("copyRecipient").onclick=async()=>{
+ const c=campaigns.find(x=>x.id===selectedId);if(!c)return;
+ try{await navigator.clipboard.writeText(c.recipient);toast("Wallet отримувача скопійовано.");}catch{toast("Не вдалося скопіювати wallet.");}
+};
+
+$("createForm").onsubmit=e=>{
+ e.preventDefault();
+  const deadline=$("campaignDeadline").value;
+  if(!deadline||deadline<localISODate()){
+    $("campaignDeadline").setCustomValidity("Оберіть сьогодні або майбутню дату.");
+    $("campaignDeadline").reportValidity();
+    return;
+  }
+  $("campaignDeadline").setCustomValidity("");
+  const c={id:Date.now(),name:$("campaignName").value.trim(),description:$("campaignDescription").value.trim(),goal:Number($("campaignGoal").value),raised:0,contributors:0,deadline,recipient:$("campaignRecipient").value.trim(),createdBy:profile.wallet||"local-user",status:"ACTIVE"};
+ campaigns.unshift(c);save();e.target.reset();renderCampaigns();showPage("campaigns");toast("Demo-кампанію створено.");
+};
+$("campaignDeadline").oninput=()=>$("campaignDeadline").setCustomValidity("");
+
+function renderProfile(){
+ $("profileName").textContent=profile.name||"Taras";$("avatar").textContent=(profile.name||"T").charAt(0).toUpperCase();
+ $("profileWallet").textContent=profile.wallet||"Wallet не підключено";
+ $("balance").textContent=profile.wallet?"Баланс через RPC буде доступний після інтеграції":"—";
+ $("contributed").textContent=money(profile.contributed)+" USDC";
+ $("createdCount").textContent=campaigns.filter(c=>c.createdBy===profile.wallet&&profile.wallet||c.createdBy==="local-user"&&!profile.wallet).length;
+}
+$("editProfile").onclick=()=>{$("profileNameInput").value=profile.name||"Taras";$("profileModal").classList.add("show")};
+$("profileForm").onsubmit=e=>{e.preventDefault();profile.name=$("profileNameInput").value.trim()||"Taras";save();renderProfile();$("profileModal").classList.remove("show");toast("Профіль оновлено.")};
+$("copyWallet").onclick=async()=>{if(!profile.wallet)return toast("Спочатку підключи Phantom.");try{await navigator.clipboard.writeText(profile.wallet);toast("Адресу скопійовано.");}catch{toast("Не вдалося скопіювати адресу.")}};
+
+async function connectWallet(){
+ if(!window.solana?.isPhantom){toast("Phantom не знайдено. Відкрий сайт у Phantom Browser або встанови Phantom.");return}
+ try{
+  if(profile.wallet){await window.solana.disconnect?.();profile.wallet="";$("walletButton").textContent="Підключити Phantom";save();renderProfile();toast("Wallet відключено.");return}
+  const response=await window.solana.connect();
+  profile.wallet=response.publicKey.toString();$("walletButton").textContent=shortWallet(profile.wallet);save();renderProfile();toast("Phantom підключено до frontend.");
+ }catch{toast("Підключення скасовано.")}
+}
+$("walletButton").onclick=connectWallet;
+
+function renderOrganizer(){
+ const own=campaigns.filter(c=>c.createdBy===profile.wallet||(c.createdBy==="local-user"&&!profile.wallet));
+ $("organizerRows").innerHTML=own.length?own.map(c=>`<tr><td>${esc(c.name)}</td><td>${pct(c)}%</td><td>${esc(c.status)}</td><td><button class="small-btn" onclick="openCampaign(${c.id})">Відкрити</button></td></tr>`).join(""):'<tr><td colspan="4" class="muted">Власних кампаній ще немає.</td></tr>';
+}
+function renderCalendar(){
+ const now=new Date(),year=now.getFullYear(),month=now.getMonth(),first=new Date(year,month,1).getDay()||7,days=new Date(year,month+1,0).getDate();
+ let out="";for(let i=1;i<first;i++)out+='<div></div>';
+ for(let d=1;d<=days;d++){const iso=year+"-"+String(month+1).padStart(2,"0")+"-"+String(d).padStart(2,"0");const items=campaigns.filter(c=>c.deadline===iso);out+=`<div class="day"><strong>${d}</strong>${items.map(c=>`<small>${esc(c.name)}</small>`).join("")}</div>`}
+ $("calendar").innerHTML=out;
+}
+function renderHistory(){$("historyRows").innerHTML=history.length?history.map(h=>`<tr><td>${esc(h.date)}</td><td>${esc(h.type)}</td><td>${esc(h.amount)} USDC</td><td>${esc(h.status)}</td><td class="muted">${h.signature?"Available after on-chain":"—"}</td></tr>`).join(""):'<tr><td colspan="5" class="muted">Історія порожня.</td></tr>'}
+$("resetDemo").onclick=()=>{if(confirm("Скинути всі локальні demo-дані?")){Object.values(STORAGE).forEach(k=>localStorage.removeItem(k));location.reload()}};
+
+setupDeadlineInput();renderCampaigns();renderProfile();renderHistory();
+</script>
+</body>
+</html>
