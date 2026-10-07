@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKYNULYS — Створити кампанію</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body data-page="create">
+
+<div class="layout">
+
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+            <div class="logo">S</div>
+
+            <div>
+                <b>SKYNULYS</b>
+                <small>GROUP PAYMENTS</small>
+            </div>
+        </div>
+
+        <nav class="menu">
+            <a href="index.html">Головна</a>
+            <a href="campaigns.html">Кампанії</a>
+            <a href="create.html" class="active">Створити кампанію</a>
+            <a href="activity.html">Активність</a>
+            <a href="users.html">Користувачі</a>
+            <a href="settings.html">Налаштування</a>
+        </nav>
+
+        <div class="sidebar-user">
+            <strong data-user-name>Користувач</strong>
+            <span data-user-role>ОРГАНІЗАТОР</span>
+            <button data-logout class="logout-btn">Вийти</button>
+        </div>
+
+    </aside>
+
+    <main class="main-content">
+
+        <div class="page-header">
+            <div>
+                <p class="eyebrow">NEW CAMPAIGN</p>
+                <h1>Створити кампанію</h1>
+                <p>Створи новий збір грошей.</p>
+            </div>
+        </div>
+
+        <div class="form-card">
+
+            <form id="createCampaignForm" class="auth-form">
+
+                <label>
+                    Назва кампанії
+                    <input
+                        id="campaignTitle"
+                        type="text"
+                        placeholder="Наприклад: Поїздка класом"
+                        required
+                    >
+                </label>
+
+                <label>
+                    Опис
+                    <textarea
+                        id="campaignDescription"
+                        placeholder="Для чого потрібні гроші?"
+                        required
+                    ></textarea>
+                </label>
+
+                <label>
+                    Цільова сума
+                    <input
+                        id="campaignGoal"
+                        type="number"
+                        min="1"
+                        placeholder="10000"
+                        required
+                    >
+                </label>
+
+                <button class="btn" type="submit">
+                    Створити кампанію
+                </button>
+
+            </form>
+
+        </div>
+
+    </main>
+
+</div>
+
+<script src="js/app.js"></script>
+
+</body>
+</html>

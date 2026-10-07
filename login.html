@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKYNULYS — Вхід</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body data-page="login">
+
+<div class="auth-page">
+
+    <div class="auth-box">
+
+        <div class="auth-brand">
+            <div class="logo">S</div>
+
+            <div>
+                <b>SKYNULYS</b>
+                <small>GROUP PAYMENTS</small>
+            </div>
+        </div>
+
+        <h1>Вхід</h1>
+
+        <p class="auth-description">
+            Увійди до свого акаунта.
+        </p>
+
+        <div id="loginMessage" class="hidden"></div>
+
+        <form id="loginForm" class="auth-form">
+
+            <label>
+                Email
+                <input
+                    id="loginEmail"
+                    type="email"
+                    placeholder="you@example.com"
+                    autocomplete="email"
+                    required
+                >
+            </label>
+
+            <label>
+                Пароль
+                <input
+                    id="loginPassword"
+                    type="password"
+                    placeholder="Ваш пароль"
+                    autocomplete="current-password"
+                    required
+                >
+            </label>
+
+            <button class="btn" type="submit">
+                Увійти
+            </button>
+
+        </form>
+
+        <div class="auth-footer">
+            Немає акаунта?
+            <a href="register.html">Зареєструватися</a>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="js/app.js"></script>
+
+</body>
+</html>

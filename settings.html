@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKYNULYS — Налаштування</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body data-page="settings">
+
+<div class="layout">
+
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+            <div class="logo">S</div>
+
+            <div>
+                <b>SKYNULYS</b>
+                <small>GROUP PAYMENTS</small>
+            </div>
+        </div>
+
+        <nav class="menu">
+            <a href="index.html">Головна</a>
+            <a href="campaigns.html">Кампанії</a>
+            <a href="create.html">Створити кампанію</a>
+            <a href="activity.html">Активність</a>
+            <a href="users.html">Користувачі</a>
+            <a href="settings.html" class="active">Налаштування</a>
+        </nav>
+
+        <div class="sidebar-user">
+            <strong data-user-name>Користувач</strong>
+            <span data-user-role>УЧАСНИК</span>
+            <button data-logout class="logout-btn">Вийти</button>
+        </div>
+
+    </aside>
+
+    <main class="main-content">
+
+        <div class="page-header">
+            <div>
+                <p class="eyebrow">SETTINGS</p>
+                <h1>Налаштування</h1>
+                <p>Налаштування акаунта.</p>
+            </div>
+        </div>
+
+        <div class="settings-card">
+
+            <h2>Мій акаунт</h2>
+
+            <p>
+                Ім'я:
+                <strong data-user-name></strong>
+            </p>
+
+            <p>
+                Роль:
+                <strong data-user-role></strong>
+            </p>
+
+            <button
+                data-logout
+                class="btn secondary"
+            >
+                Вийти з акаунта
+            </button>
+
+        </div>
+
+        <div
+            class="settings-card admin-setting"
+            data-admin-only
+        >
+
+            <h2>Адміністратор</h2>
+
+            <p>
+                Скидання демо-даних видалить
+                користувачів та кампанії.
+            </p>
+
+            <button
+                data-reset-data
+                class="btn danger"
+            >
+                Скинути демо-дані
+            </button>
+
+        </div>
+
+    </main>
+
+</div>
+
+<script src="js/app.js"></script>
+
+</body>
+</html>
